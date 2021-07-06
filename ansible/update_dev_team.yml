@@ -1,0 +1,63 @@
+---
+
+- name: Make sure groups in hosts are up to date
+  hosts: development
+  user: ansible
+  become: yes
+  tasks:
+    - name: Development Team Group
+      group:
+        name: devteam
+        state: present
+    - name: Front End Team Group
+      group:
+        name: frontendteam
+        state: present
+    - name: Back End Team Group
+      group:
+        name: backendteam
+        state: present
+- name: Make sure users in hosts is up to date
+  hosts: development
+  user: ansible
+  become: yes
+  tasks:
+    - name: User Juan
+      hosts: juan
+      user:
+        name: juan
+        password: $6$TfEJ3Bo70b/GsO$sRmofJJHLPbt9U2x9mE.ByP5Zc8A1BsasjOeq/JXzxl8P2XpzRVG7q/tJ7p4TWvgbDIi4lKJAveYvxjIP5r7M. # newuser
+        update_password: on_create
+        shell: /bin/bash
+        groups: devteam, frontendteam
+        append: yes
+        state: present
+    - name: User Elena
+      hosts: elena
+      user:
+        name: elena
+        password: $6$TfEJ3Bo70b/GsO$sRmofJJHLPbt9U2x9mE.ByP5Zc8A1BsasjOeq/JXzxl8P2XpzRVG7q/tJ7p4TWvgbDIi4lKJAveYvxjIP5r7M. # newuser
+        update_password: on_create
+        shell: /bin/bash
+        groups: devteam, backendteam
+        append: yes
+        state: present
+    - name: User Carlos
+      hosts: carlos
+      user:
+        name: carlos
+        password: $6$TfEJ3Bo70b/GsO$sRmofJJHLPbt9U2x9mE.ByP5Zc8A1BsasjOeq/JXzxl8P2XpzRVG7q/tJ7p4TWvgbDIi4lKJAveYvxjIP5r7M. # newuser
+        update_password: on_create
+        shell: /bin/bash
+        groups: devteam, backendteam, frontendteam
+        append: yes
+        state: present
+    - name: User SysAdmin
+      user:
+        name: sysadmin
+        password: $6$RRk529.ex$jGQIm3e0/ZEQucouSTqId3gGRP2IvpnGxQsi.FR.0ukZC3JFsIJ5Sf6J/rLVnVPN3DeTexKKWT8BUjpyFhPrf/ # sysadmin123
+        update_password: on_create
+        shell: /bin/bash
+        groups: sudo
+        append: yes
+        state: present

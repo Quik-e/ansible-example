@@ -1,0 +1,14 @@
+- name: Install or update MariaDB
+  tags: ubuntu,dbservers
+  apt:
+    name: mariadb-server
+    state: latest
+    update_cache: yes
+  when: ansible_distribution in ["Ubuntu", "Debian"]
+
+- name: Start MariaDB
+  tags: dbservers,started
+  service:
+    name: mysql
+    state: started
+    enabled: yes

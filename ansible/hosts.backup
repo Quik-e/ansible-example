@@ -1,0 +1,61 @@
+---
+all:
+  children:
+    controller:
+      hosts:
+        127.0.0.1
+    webservers:
+      hosts:
+        192.168.1.[211:213]
+    dbservers:
+      hosts: 
+        192.168.1.214
+    fileservers:
+      hosts:
+        192.168.1.215
+    frontendteam:
+      hosts:
+        192.168.1.216:
+          worker: juan
+          texteditor: vim
+        192.168.1.218:
+          worker: carlos
+          texteditor: emacs
+    backendteam:
+      hosts:
+        192.168.1.217:
+          worker: elena
+          texteditor: nano
+        192.168.1.218:
+          worker: carlos
+          texteditor: emacs
+    devteam:
+      children:
+        frontendteam:
+        backendteam:
+
+
+# [samba]
+# 192.168.1.211
+
+# [juan]
+# 192.168.1.212
+
+# [elena]
+# 192.168.1.213
+
+# [carlos]
+# 192.168.1.214
+
+# [development:children]
+# juan
+# elena
+# carlos
+
+# [ubuntu:children]
+# samba
+# development
+
+# [ubuntu:vars]
+# ansible_user=ansible
+

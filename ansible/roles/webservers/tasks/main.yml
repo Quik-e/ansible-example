@@ -1,0 +1,31 @@
+- name: Install or update NGINX
+  tags: ubuntu,webservers
+  apt:
+    name: nginx
+    state: latest
+    update_cache: yes
+  when: ansible_distribution in ["Ubuntu", "Debian"]
+
+- name: Delete MariaDB if present
+  tags: ubuntu,webservers,started
+  apt:
+    name: mariadb-server
+    state: absent
+  when: ansible_distribution in ["Ubuntu", "Debian"]
+
+- name: Copy HTML file to servers
+  tags: webservers,upload
+  copy:
+    src: files/default_site.html
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: 0644
+  notify: Restart NGINX
+
+- name: Start NGINX
+  tags: webservers,started
+  service:
+    name: nginx
+    state: started
+    enabled: yes

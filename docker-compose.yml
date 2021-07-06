@@ -1,0 +1,112 @@
+version: "3"
+
+networks:
+  lan:
+    driver: macvlan
+    driver_opts:
+      parent: eth0
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24
+
+services:
+    ansible:
+        build: ./build/ansible
+        container_name: ansible
+        hostname: ansible
+        networks:
+            lan:
+                ipv4_address: 192.168.1.210
+        ports:
+            - 22:22
+        volumes:
+            - ./ansible:/etc/ansible
+        restart: unless-stopped
+    
+    webserver1:
+        build: ./build/ubuntu
+        container_name: webserver1
+        hostname: webserver1
+        networks:
+            lan:
+                ipv4_address: 192.168.1.211
+        ports:
+            - 22:22
+        restart: unless-stopped
+    
+    webserver2:
+        build: ./build/ubuntu
+        container_name: webserver2
+        hostname: webserver2
+        networks:
+            lan:
+                ipv4_address: 192.168.1.212
+        ports:
+            - 22:22
+        restart: unless-stopped
+    
+    webserver3:
+        build: ./build/ubuntu
+        container_name: webserver3
+        hostname: webserver3
+        networks:
+            lan:
+                ipv4_address: 192.168.1.213
+        ports:
+            - 22:22
+        restart: unless-stopped
+
+    dbserver4:
+        build: ./build/ubuntu
+        container_name: dbserver4
+        hostname: dbserver4
+        networks:
+            lan:
+                ipv4_address: 192.168.1.214
+        ports:
+            - 22:22
+        restart: unless-stopped
+
+    fileserver5:
+        build: ./build/ubuntu
+        container_name: fileserver5
+        hostname: fileserver5
+        networks:
+            lan:
+                ipv4_address: 192.168.1.215
+        ports:
+            - 22:22
+        restart: unless-stopped
+
+    devteam6:
+        build: ./build/ubuntu
+        container_name: devteam6
+        hostname: devteam6
+        networks:
+            lan:
+                ipv4_address: 192.168.1.216
+        ports:
+            - 22:22
+        restart: unless-stopped
+
+    devteam7:
+        build: ./build/ubuntu
+        container_name: devteam7
+        hostname: devteam7
+        networks:
+            lan:
+                ipv4_address: 192.168.1.217
+        ports:
+            - 22:22
+        restart: unless-stopped
+
+    devteam8:
+        build: ./build/ubuntu
+        container_name: devteam8
+        hostname: devteam8
+        networks:
+            lan:
+                ipv4_address: 192.168.1.218
+        ports:
+            - 22:22
+        restart: unless-stopped

@@ -1,0 +1,13 @@
+[newhosts]
+192.168.1.[211:218]
+
+[newhosts:vars]
+ansible_user=root
+ansible_password=P@ssw0rd
+
+[controller]
+127.0.0.1
+
+[controller:vars]
+ansible_user=root
+ansible_password=P@ssw0rd

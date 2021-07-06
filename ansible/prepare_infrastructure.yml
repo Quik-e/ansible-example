@@ -1,0 +1,38 @@
+---
+
+- name: Basic functions
+  hosts: all
+  user: ansible
+  become: yes
+  roles:
+  - base
+
+- name: Prepare or update webservers
+  hosts: webservers
+  user: ansible
+  become: yes
+  roles: 
+  - webservers
+
+- name: Prepare or update dbservers
+  hosts: dbservers
+  user: ansible
+  become: yes
+  roles:
+  - dbservers
+    
+
+- name: Prepare or update fileservers
+  hosts: fileservers
+  user: ansible
+  become: yes
+  roles:
+  - fileservers
+
+- name: Prepare DevTeam's Workstation
+  hosts: devteam
+  user: ansible
+  become: yes
+  roles:
+  - devteam
+   

@@ -1,0 +1,58 @@
+- name: Install or update Samba
+  tags: ubuntu,fileservers
+  apt:
+    name: samba
+    state: latest
+    update_cache: yes
+  when: ansible_distribution in ["Ubuntu", "Debian"]
+
+- name: Make sure ansible user is created
+  tags: fileservers,user
+  user:
+    name: samba
+    shell: /bin/bash
+    append: yes
+    state: present
+
+- name: Copy Samba config file to servers
+  tags: fileservers,upload
+  copy:
+    src: files/smb.conf
+    dest: /etc/samba/smb.conf
+    owner: root
+    group: root
+    mode: 0644
+  register: new_conf
+
+- name: Make sure /sambashare directory is created
+  tags: fileservers,upload
+  file:
+    path: "/sambashare"
+    state: directory
+    owner: root
+    group: root
+    mode: 0666
+
+- name: Touch test file
+  tags: fileservers,upload
+  file:
+    path: "/sambashare/hello_there"
+    state: touch
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Start Samba
+  tags: fileservers,started
+  service:
+    name: smbd
+    state: started
+    enabled: yes
+
+- name: Restart Samba
+  tags: fileservers,started,upload
+  service:
+    name: smbd
+    state: restarted
+    enabled: yes
+  when: new_conf.changed

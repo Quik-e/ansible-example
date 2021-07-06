@@ -1,0 +1,31 @@
+---
+- name: Install programs
+  hosts: devteam
+  become: yes
+  gather_facts: yes
+  tasks:
+    - name: Install cmatrix and neofetch if not installed (Ubuntu, Debian)
+      apt:
+        name: 
+          - cmatrix
+          - neofetch
+        state: latest
+        update_cache: yes
+      when: ansible_distribution in ["Ubuntu", "Debian"]
+    - name: Install cmatrix and neofetch if not installed (CentOS)
+      yum:
+        name: 
+          - cmatrix
+          - neofetch
+        state: latest
+        update_cache: yes
+      when: ansible_distribution == "CentOS"
+    - name: Install cmatrix and neofetch if not installed (Fedora)
+      dnf:
+        name: 
+          - cmatrix
+          - neofetch
+        state: latest
+        update_cache: yes
+      when: ansible_distribution == "Fedora"
+

@@ -1,0 +1,14 @@
+- name: Make sure user is created
+  tags: devteam,user
+  user:
+    name: "{{ worker }}"
+    update_password: on_create
+    shell: /bin/bash
+    append: yes
+    state: present
+    
+- name: Make sure text editor is installed
+  tags: devteam
+  apt:
+    name: "{{ texteditor }}"
+    update_cache: yes

@@ -1,0 +1,50 @@
+---
+all:
+  children:
+    webservers:
+      hosts:
+        192.168.1.[211:213]
+    dbservers:
+      hosts: 
+        192.168.1.214
+    fileservers:
+      hosts:
+        192.168.1.215
+    frontendteam:
+      hosts:
+        192.168.1.216:
+        192.168.1.218:
+    backendteam:
+      hosts:
+        192.168.1.217:
+        192.168.1.218:
+    devteam:
+      children:
+        frontendteam:
+        backendteam:
+
+
+# [samba]
+# 192.168.1.211
+
+# [juan]
+# 192.168.1.212
+
+# [elena]
+# 192.168.1.213
+
+# [carlos]
+# 192.168.1.214
+
+# [development:children]
+# juan
+# elena
+# carlos
+
+# [ubuntu:children]
+# samba
+# development
+
+# [ubuntu:vars]
+# ansible_user=ansible
+

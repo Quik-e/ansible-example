@@ -1,0 +1,102 @@
+---
+- name: Prepare controller
+  hosts: controller
+  user: root
+  gather_facts: yes
+  tasks:
+    # https://www.alibabacloud.com/blog/managing-system-users-using-ansible_593861
+    - name: Make sure ansible user is created with ssh keys
+      user:
+        generate_ssh_key: yes
+        ssh_key_bits: 4096
+        ssh_key_type: rsa
+        ssh_key_file: .ssh/id_rsa
+        ssh_key_comment: ansible user
+        name: ansible
+        password: $6$PF.xRbQfb1IF5$McatcknWAF7IpXtyijzDbAk57b06fQHf5A4QFzGFsQOKBqGZRlmbn4o5DqsrTsLb.moCfVUqxyURNVlZYjZ9M/ # ansipass - mkpasswd --method=sha-512
+        update_password: always
+        shell: /bin/bash
+        append: yes
+        groups: sudo
+        state: present
+    - name: Make sure sysadmin user is created with ssh keys
+      user:
+        generate_ssh_key: yes
+        ssh_key_bits: 4096
+        ssh_key_type: rsa
+        ssh_key_file: .ssh/id_rsa
+        ssh_key_comment: sysadmin user
+        ssh_key_passphrase: $6$kQIpmkJTp/x3HRcz$NNjirVY5La8GA1tJ02TjcYc2RqfQq1MqVg0f3SUYRi6mzCuozZYXsNEcJJkVgUqn7J1U9I8AXzJuNvW1GeeJG. #syspass - mkpasswd --method=sha-512
+        name: sysadmin
+        password: $6$kQIpmkJTp/x3HRcz$NNjirVY5La8GA1tJ02TjcYc2RqfQq1MqVg0f3SUYRi6mzCuozZYXsNEcJJkVgUqn7J1U9I8AXzJuNvW1GeeJG. # syspass - mkpasswd --method=sha-512
+        update_password: always
+        shell: /bin/bash
+        append: yes
+        groups: sudo
+        state: present
+    - name: Make sure sudo is installed
+      apt:
+        name: sudo
+        update_cache: yes
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+
+
+- name: Prepare controlled devices
+  hosts: newhosts
+  user: root
+  gather_facts: yes
+  serial: 3
+  vars:
+    sshkey: "{{ lookup('file', '/home/ansible/.ssh/id_rsa.pub') }}"
+  tasks:
+#  - debug: 
+#     msg: "the value is {{ sshkey }}"
+  - name: Make sure ansible user is created
+    user:
+      name: ansible
+      password: $6$PF.xRbQfb1IF5$McatcknWAF7IpXtyijzDbAk57b06fQHf5A4QFzGFsQOKBqGZRlmbn4o5DqsrTsLb.moCfVUqxyURNVlZYjZ9M/
+      update_password: always
+      shell: /bin/bash
+      append: yes
+      groups: sudo
+      state: present
+  - name: Make sure sysadmin user is created with ssh keys
+    user:
+      name: sysadmin
+      password: $6$kQIpmkJTp/x3HRcz$NNjirVY5La8GA1tJ02TjcYc2RqfQq1MqVg0f3SUYRi6mzCuozZYXsNEcJJkVgUqn7J1U9I8AXzJuNvW1GeeJG. # syspass - mkpasswd --method=sha-512
+      update_password: always
+      shell: /bin/bash
+      append: yes
+      groups: sudo
+      state: present
+  - name: Make sure sudo is installed
+    apt:
+      name: sudo
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+  - name: Make sure .ssh directory is created
+    file:
+      path: "/home/ansible/.ssh"
+      state: directory
+      owner: ansible
+  - name: Make sure authorized_keys is created
+    file:
+      path: "/home/ansible/.ssh/authorized_keys"
+      state: touch
+      owner: ansible
+  - name: Add sshkey if not in authorized_keys
+    lineinfile:
+      state: present
+      path: "/home/ansible/.ssh/authorized_keys"
+      line: "{{ sshkey }}"
+  - name: Disable ssh root login
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regex: 'PermitRootLogin yes'
+      line: PermitRootLogin no
+  - name: Restart sshd to use new config
+    service:
+      name: ssh
+      state: restarted
+
